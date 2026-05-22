@@ -4,7 +4,7 @@ import streamlit as st
 from groq import Groq
 
 # API açarını birbaşa buraya yazırıq (Secrets bölməsi ilə işimiz qalmır)
-API_KEY = "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"
+API_KEY = "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"
 client = Groq(api_key=API_KEY)
 
 # 1. Səhifə Ayarları və Ağ Ekran Dizaynı
@@ -27,7 +27,7 @@ st.markdown("<h1 style='text-align: center;'>🛠️ AvtoFix Pro</h1>", unsafe_a
 
 # API Girişi (Xətanı önləmək üçün)
 # API açarını birbaşa bura qoyuram ki xəta verməsin (amma gələcəkdə Secrets-ə qoymalısan)
-api_key = st.secrets.get("GROQ_API_KEY", "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")
+api_key = st.secrets.get("GROQ_API_KEY", "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")
 client = Groq(api_key=api_key)
 
 # 2. Maşın Modelləri Bazası (Şəkillərlə)
