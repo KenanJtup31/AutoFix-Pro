@@ -1,5 +1,11 @@
 import streamlit as st
 from groq import Groq
+import streamlit as st
+from groq import Groq
+
+# API açarını birbaşa buraya yazırıq (Secrets bölməsi ilə işimiz qalmır)
+API_KEY = "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"
+client = Groq(api_key=API_KEY)
 
 # 1. Səhifə Ayarları və Ağ Ekran Dizaynı
 st.set_page_config(page_title="AutoFix Pro", page_icon="🚗", layout="centered")
