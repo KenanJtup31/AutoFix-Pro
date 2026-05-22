@@ -1,29 +1,27 @@
 import streamlit as st
 from groq import Groq
+from duckduckgo_search import DDGS
 
 # 1. Səhifə Ayarları
-st.set_page_config(page_title="AutoFix Pro", page_icon="🚗", layout="centered")
+st.set_page_config(page_title="AutoFix Pro AI", page_icon="🚗", layout="centered")
 
-# 2. CSS Dizaynı (Ağ ekran)
+# CSS Dizaynı
 st.markdown("""
     <style>
     .main { background-color: #ffffff; }
-    .stButton>button { width: 100%; border-radius: 10px; height: 3em; background-color: #f8f9fa; border: 1px solid #ddd; }
-    .stButton>button:hover { border-color: #FF4B4B; color: #FF4B4B; }
-    h1 { color: #1E1E1E; }
+    .stButton>button { width: 100%; border-radius: 10px; background-color: #f8f9fa; border: 1px solid #ddd; }
     .developed-by { text-align: center; color: #888; font-size: 14px; margin-bottom: 20px; }
     </style>
     """, unsafe_allow_html=True)
 
-# 3. API və Müştəri
+# 3. API
 API_KEY = "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"
 client = Groq(api_key=API_KEY)
 
 # Üst Başlıq
 st.markdown("<div class='developed-by'>Developed by Kenan Elizade</div>", unsafe_allow_html=True)
-st.markdown("<h1 style='text-align: center;'>🛠️ AvtoFix Pro</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center;'>🛠️ AvtoFix Pro AI</h1>", unsafe_allow_html=True)
 
-# 4. Maşın Modelləri Bazası
 models = {
     "Mercedes-Benz": "https://www.carlogos.org/car-logos/mercedes-benz-logo.png",
     "BMW": "https://www.carlogos.org/car-logos/bmw-logo.png",
@@ -35,15 +33,12 @@ models = {
     "Kia": "https://www.carlogos.org/car-logos/kia-logo.png"
 }
 
-# Session State
-if "selected_model" not in st.session_state:
-    st.session_state.selected_model = None
-if "messages" not in st.session_state:
-    st.session_state.messages = []
+if "selected_model" not in st.session_state: st.session_state.selected_model = None
+if "messages" not in st.session_state: st.session_state.messages = []
 
-# 5. Məntiq
+# Məntiq
 if st.session_state.selected_model is None:
-    st.markdown("<h4 style='text-align: center;'>Aşağıdakı maşın modellərindən birini seçin:</h4>", unsafe_allow_html=True)
+    st.markdown("<h4 style='text-align: center;'>Maşın modelini seçin:</h4>", unsafe_allow_html=True)
     cols = st.columns(3)
     for i, (name, img_url) in enumerate(models.items()):
         with cols[i % 3]:
@@ -69,16 +64,25 @@ else:
 
         with st.chat_message("assistant"):
             try:
+                # 1. AI Cavabı
                 response = client.chat.completions.create(
                     messages=[
-                        {"role": "system", "content": f"Sən səmimi və professional avtomobil mühəndisisən. İstifadəçi {st.session_state.selected_model} üçün sual verir. Səmimi, texniki və dəqiq cavab ver."},
+                        {"role": "system", "content": f"Sən peşəkar avtomobil mühəndisisən. {st.session_state.selected_model} üçün verilən problemin səbəbini və addım-addım həll yolunu izah et."},
                         {"role": "user", "content": prompt}
                     ],
-                    # ƏSAS DƏYİŞİKLİK BURADADIR:
                     model="llama-3.3-70b-versatile",
                 )
                 full_response = response.choices[0].message.content
                 st.markdown(full_response)
+                
+                # 2. Şəkil Axtarışı
+                st.info("🔍 Problemlə bağlı şəkillər axtarılır...")
+                with DDGS() as ddgs:
+                    query = f"{st.session_state.selected_model} {prompt} repair"
+                    results = list(ddgs.images(query, max_results=2))
+                    for res in results:
+                        st.image(res['image'], caption="İnternetdən tapılan köməkçi şəkil")
+                
                 st.session_state.messages.append({"role": "assistant", "content": full_response})
             except Exception as e:
                 st.error(f"Xəta baş verdi: {e}")
