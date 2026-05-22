@@ -16,7 +16,6 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # 3. API və Müştəri
-# Birbaşa kodun içindəki açarı istifadə edirik ki, sistem qarışmasın
 API_KEY = "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"
 client = Groq(api_key=API_KEY)
 
@@ -75,11 +74,12 @@ else:
                         {"role": "system", "content": f"Sən səmimi və professional avtomobil mühəndisisən. İstifadəçi {st.session_state.selected_model} üçün sual verir. Səmimi, texniki və dəqiq cavab ver."},
                         {"role": "user", "content": prompt}
                     ],
-                    model="llama3-8b-8192",
+                    # ƏSAS DƏYİŞİKLİK BURADADIR:
+                    model="llama-3.3-70b-versatile",
                 )
                 full_response = response.choices[0].message.content
                 st.markdown(full_response)
                 st.session_state.messages.append({"role": "assistant", "content": full_response})
             except Exception as e:
                 st.error(f"Xəta baş verdi: {e}")
-    
+                
